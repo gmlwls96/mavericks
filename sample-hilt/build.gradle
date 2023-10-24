@@ -1,3 +1,5 @@
+import static de.fayard.refreshVersions.core.Versions.versionFor
+
 apply plugin: "com.android.application"
 apply plugin: "kotlin-android"
 apply plugin: "kotlin-kapt"
@@ -6,6 +8,7 @@ apply plugin: "dagger.hilt.android.plugin"
 android {
     defaultConfig {
         applicationId "com.airbnb.mvrx.helloHilt"
+        minSdk 21
         versionCode 1
         versionName "0.0.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -19,12 +22,27 @@ android {
     }
 
     buildFeatures {
-        viewBinding true
+        compose true
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion versionFor("version.androidx.compose.compiler")
+    }
+
     namespace 'com.airbnb.mvrx.hellohilt'
 }
 
 dependencies {
+    implementation project(":mvrx-compose")
     implementation project(":mvrx-hilt")
     implementation project(":utils-view-binding")
     kapt libs.hiltCompiler
@@ -32,4 +50,11 @@ dependencies {
     implementation libs.appcompat
     implementation libs.constraintlayout
     implementation libs.fragmentKtx
+
+    implementation libs.activityCompose
+    implementation libs.composeMaterial
+    androidTestImplementation libs.composeTest
+    androidTestImplementation libs.composeMaterial
+    implementation libs.navigationCompose
+    implementation libs.composeUiTool
 }
