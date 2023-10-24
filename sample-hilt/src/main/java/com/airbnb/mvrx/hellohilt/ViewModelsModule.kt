@@ -1,5 +1,6 @@
 package com.airbnb.mvrx.hellohilt
 
+import com.airbnb.mvrx.hellohilt.screen.detail.DetailViewModel
 import com.airbnb.mvrx.hellohilt.screen.timeline.TimelineViewModel
 import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.MavericksViewModelComponent
@@ -17,4 +18,9 @@ interface ViewModelsModule {
     @IntoMap
     @ViewModelKey(TimelineViewModel::class)
     fun timelineViewModelFactory(factory: TimelineViewModel.Factory): AssistedViewModelFactory<*, *>
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(DetailViewModel::class)
+    fun detailViewModelFactory(factory: DetailViewModel.Factory): AssistedViewModelFactory<*, *>
 }

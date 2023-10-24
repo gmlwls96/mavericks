@@ -36,7 +36,10 @@ class TimelineViewModel @AssistedInject constructor(
                 .onStart {
                     setState { copy(isLoading = true) }
                 }
-                .execute(Dispatchers.IO) {
+                .execute(
+                    Dispatchers.IO,
+                    retainValue = TimeLineState::feedList
+                ) {
                     Log.i("hjtag", " in vm, isLoading = false, feedList = $it")
                     copy(isLoading = false, feedList = it)
                 }
@@ -60,7 +63,7 @@ class TimelineViewModel @AssistedInject constructor(
                         }
 
                         is Success -> {
-                            copy(feedList = it, toastMsg =  if (isLike) "like feed$feedSerialNo " else "cancle like ")
+                            copy(feedList = it, toastMsg = if (isLike) "like feed$feedSerialNo " else "cancle like ")
                         }
 
                         else -> {

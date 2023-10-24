@@ -2,6 +2,7 @@ package com.airbnb.mvrx.hellohilt.repository
 
 import com.airbnb.mvrx.hellohilt.entity.BannerEntity
 import com.airbnb.mvrx.hellohilt.entity.BaseEntity
+import com.airbnb.mvrx.hellohilt.entity.CommentEntity
 import com.airbnb.mvrx.hellohilt.entity.FeedEntity
 import com.airbnb.mvrx.hellohilt.entity.FeedListEntity
 import kotlinx.coroutines.delay
@@ -12,7 +13,7 @@ import kotlin.random.Random
 class FakeFeedRepositoryImpl : FeedRepository {
     override suspend fun getFeedList(): Flow<FeedListEntity> =
         flow {
-            delay(Random.nextLong(100,2000))
+            delay(Random.nextLong(100, 2000))
             emit(FeedListEntity(feedList))
         }
 
@@ -25,12 +26,24 @@ class FakeFeedRepositoryImpl : FeedRepository {
     override suspend fun postLike(feedSerialNo: Int, like: Boolean): Flow<BaseEntity> =
         flow {
             delay(100)
-            if (feedSerialNo <= feedList.size) {
+            if (feedSerialNo < feedList.size) {
                 feedList = feedList.makeNewFeedList(feedSerialNo, like)
                 emit(BaseEntity(""))
             } else {
                 throw Throwable("feedSerialNo does not exist")
             }
+        }
+
+    override suspend fun getFeed(feedSerialNo: Int): Flow<FeedEntity> =
+        flow {
+            delay(100)
+            emit(feedList.firstOrNull { it.feedSerialNo == feedSerialNo } ?: throw Throwable("feedSerialNo does not exist"))
+        }
+
+    override suspend fun getCommentList(feedSerialNo: Int): Flow<List<CommentEntity>> =
+        flow {
+            delay(100)
+            emit(commentList.filter { it.feedSerialNo == feedSerialNo })
         }
 
     private fun List<FeedEntity>.makeNewFeedList(index: Int, like: Boolean) =
@@ -151,7 +164,32 @@ class FakeFeedRepositoryImpl : FeedRepository {
             )
         )
 
-        private const val FIRST_PAGE = 0
-        private const val LAST_PAGE = 2
+        var commentList = listOf(
+            CommentEntity(
+                commentSerialNo = 0,
+                feedSerialNo = 0,
+                userSerialNo = 1,
+                userName = "hj",
+                comment = "comment~!",
+                date = System.currentTimeMillis()
+            ),
+            CommentEntity(
+                commentSerialNo = 1,
+                feedSerialNo = 1,
+                userSerialNo = 1,
+                userName = "hj",
+                comment = "hihi",
+                date = System.currentTimeMillis()
+            ),
+
+            CommentEntity(
+                commentSerialNo = 2,
+                feedSerialNo = 1,
+                userSerialNo = 1,
+                userName = "hj",
+                comment = "hello~~",
+                date = System.currentTimeMillis()
+            )
+        )
     }
 }
