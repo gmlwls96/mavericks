@@ -46,6 +46,23 @@ class FakeFeedRepositoryImpl : FeedRepository {
             emit(commentList.filter { it.feedSerialNo == feedSerialNo })
         }
 
+    override suspend fun postComment(feedSerialNo: Int, comment: String, userSerialNo: Int, userName: String): Flow<BaseEntity> = flow {
+        delay(100)
+        commentList = commentList.toMutableList().let {
+            it.plus(
+                CommentEntity(
+                    commentSerialNo = it.size,
+                    comment = comment,
+                    feedSerialNo = feedSerialNo,
+                    userSerialNo = userSerialNo,
+                    userName = userName,
+                    date = System.currentTimeMillis()
+                )
+            )
+        }
+        emit(BaseEntity(""))
+    }
+
     private fun List<FeedEntity>.makeNewFeedList(index: Int, like: Boolean) =
         this.toMutableList().let {
             val prev = it[index]

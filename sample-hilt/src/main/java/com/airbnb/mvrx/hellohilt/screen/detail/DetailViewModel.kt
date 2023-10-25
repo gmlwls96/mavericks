@@ -10,6 +10,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 
@@ -58,6 +59,31 @@ class DetailViewModel @AssistedInject constructor(
                     retainValue = DetailState::feedEntity
                 ) {
                     copy(feedEntity = it)
+                }
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun addComment(
+        feedSerialNo: Int,
+        comment: String,
+        userSerialNo: Int = 0,
+        userName: String = "hjtag"
+    ) {
+        viewModelScope.launch {
+            feedRepository.postComment(
+                feedSerialNo = feedSerialNo,
+                comment = comment,
+                userSerialNo = userSerialNo,
+                userName = userName
+            )
+                .flatMapLatest {
+                    feedRepository.getCommentList(feedSerialNo)
+                }.execute(
+                    Dispatchers.IO,
+                    retainValue = DetailState::commentList
+                ) {
+                    copy(commentList = it)
                 }
         }
     }

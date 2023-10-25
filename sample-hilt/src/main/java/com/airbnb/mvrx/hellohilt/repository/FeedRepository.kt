@@ -6,6 +6,7 @@ import com.airbnb.mvrx.hellohilt.entity.CommentEntity
 import com.airbnb.mvrx.hellohilt.entity.FeedEntity
 import com.airbnb.mvrx.hellohilt.entity.FeedListEntity
 import kotlinx.coroutines.flow.Flow
+import org.w3c.dom.Comment
 
 interface FeedRepository {
     suspend fun getFeedList(): Flow<FeedListEntity>
@@ -15,4 +16,7 @@ interface FeedRepository {
     suspend fun getFeed(feedSerialNo: Int): Flow<FeedEntity>
 
     suspend fun getCommentList(feedSerialNo: Int): Flow<List<CommentEntity>>
+
+    suspend fun postComment(feedSerialNo: Int, comment: String, userSerialNo: Int, userName: String): Flow<BaseEntity>
+
 }
